@@ -23,6 +23,7 @@
 	<loadAfter>
 		<li>brrainz.harmony</li>
 		<li>ludeon.rimworld.biotech</li>
+		<li>vanillaracesexpanded.sanguophage</li>
 	</loadAfter>
 	<description>
 		This mod is intended for colonists who have hemogenic ganes such as Sanguophages.
@@ -32,6 +33,9 @@
 		I'm creating this mod to solve the problem of storing hemopacks for vampires in our colony. In the base game, colonist pieces can store food and medicine in them. I wanted to add an option to store a certain number of hemopacks. So the pawn doesn't have to look for a drink when it's thirsty for blood. Especially for accidents or away from the stocks.
 
 		Pawn will look for hemopacks in the stocks and will try to share them with the other vampire colonists.
+		
+		This mod support hemopacks form : [url=https://steamcommunity.com/sharedfiles/filedetails/?id=2963116383]Vanilla Races Expanded - Sanguophager[/url]
+		And will try find more hemopacks.
 		
 		Source Code: [url=https://github.com/keepercraft/RimKeeperTakeHemopacks[/url]
 		[url=https://ko-fi.com/keepercraft][img]https://storage.ko-fi.com/cdn/kofi5.png?v=3[/img][/url]

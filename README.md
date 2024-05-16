@@ -9,4 +9,6 @@ I'm creating this mod to solve the problem of storing hemopacks for vampires in 
 
 Pawn will look for hemopacks in the stocks and will try to share them with the other vampire colonists.
 
+This mod support hemopacks form : Vanilla Races Expanded - Sanguophager.
+
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/keepercraft)
