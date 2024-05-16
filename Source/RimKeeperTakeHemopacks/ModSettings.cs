@@ -1,9 +1,5 @@
 ﻿using HarmonyLib;
-using Keepercraft.RimKeeperTakeHemopacks.Extensions;
-using Keepercraft.RimKeeperTakeHemopacks.Helpers;
-using RimWorld;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using UnityEngine;
 using Verse;
@@ -85,12 +81,12 @@ namespace Keepercraft.RimKeeperTakeHemopacks
             listingStandard.Gap();
             listingStandard.Label("Inventory threshold for start looking:");
             listingStandard.IntEntry(ref KeeperModSettings.HemogenInventoryThreshold, ref HemogenInventoryThresholdText, 1);
-
             listingStandard.Gap();
+
             listingStandard.End();
 
             Rect newRectRight = new Rect(inRect.x + (inRect.width / 2) + 20, inRect.y, inRect.width / 2, inRect.height);
-            GUI.Label(new Rect(newRectRight.x, newRectRight.y, newRectRight.width, 30), "Detected hemogen packs:");
+            GUI.Label(new Rect(newRectRight.x, newRectRight.y, newRectRight.width, 30), "Detected hemogenpacks:");
             float cell_size = 30;
             int i = 0;
             foreach (var item in KeeperModSettings.hemogenPacks)
