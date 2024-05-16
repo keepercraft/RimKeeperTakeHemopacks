@@ -1,17 +1,19 @@
-﻿using Keepercraft.RimKeeperTakeHemopacks;
-using Verse;
+﻿using Verse;
 
-namespace RimKeeperTakeHemopacks.Helpers
+namespace Keepercraft.RimKeeperTakeHemopacks.Helpers
 {
     public static class DebugHelper
     {
+        private static string _header = "Debug"; 
         public static bool Active = KeeperModSettings.DebugLog;
+
+        public static void SetHeader(string text) => _header = string.Format("[{0}] ", text);
 
         public static void Message(string text, params object[] args)
         {
             if (Active)
             {
-                Log.Message(string.Format(text, args));
+                Log.Message(_header + string.Format(text, args));
             }
         }
     }
