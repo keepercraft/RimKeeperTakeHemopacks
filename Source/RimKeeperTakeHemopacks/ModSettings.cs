@@ -7,6 +7,7 @@ namespace Keepercraft.RimKeeperTakeHemopacks
     public class KeeperModSettings : ModSettings
     {
         public static bool DebugLog = false;
+        public static bool HemogenInventoryShare = true;
         public static int HemogenInventoryLimit = 4;
         public static int HemogenInventoryThreshold = 1;
 
@@ -40,15 +41,17 @@ namespace Keepercraft.RimKeeperTakeHemopacks
             Rect newRect = new Rect(inRect.x, inRect.y, inRect.width / 2, inRect.height);
             listingStandard.Begin(newRect);
 
-            listingStandard.CheckboxLabeled("Debug Log", ref KeeperModSettings.DebugLog, "Log Warnings");
+            listingStandard.CheckboxLabeled("Debug Log", ref KeeperModSettings.DebugLog, "Log Messages");
             listingStandard.Gap();
 
             float x = listingStandard.GetPrivateField<float>("curX");
             float y = listingStandard.GetPrivateField<float>("curY");
             Texture2D HemogenpackIcon = ContentFinder<Texture2D>.Get("Things/Item/Resource/HemogenPack/HemogenPack_c");
-            GUI.DrawTexture(new Rect(x, y, 30, 30), HemogenpackIcon);
-            listingStandard.Gap(30);
-            //listingStandard.ButtonImage(HemogenpackIcon, 30, 30);
+            GUI.DrawTexture(new Rect(x, y, 30, 30), HemogenpackIcon); //listingStandard.ButtonImage(HemogenpackIcon, 30, 30);
+            listingStandard.Gap(60);
+            
+            listingStandard.CheckboxLabeled("Enable shareing", ref KeeperModSettings.HemogenInventoryShare, "Vampire colonists will be share hemopacks");
+            listingStandard.Gap();
 
             listingStandard.Label("How many take to inventory:");
             listingStandard.IntEntry(ref KeeperModSettings.HemogenInventoryLimit, ref HemogenInventoryLimitText, 1);
