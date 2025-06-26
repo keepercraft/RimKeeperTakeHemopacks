@@ -1,6 +1,7 @@
 ﻿using HarmonyLib;
 using Keepercraft.RimKeeperTakeHemopacks.Extensions;
 using Keepercraft.RimKeeperTakeHemopacks.Helpers;
+using Keepercraft.RimKeeperTakeHemopacks.Models;
 using RimWorld;
 using System.Linq;
 using System.Reflection;
@@ -19,7 +20,7 @@ namespace Keepercraft.RimKeeperTakeHemopacks
             DebugHelper.Message("Patching");
             var harmony = new Harmony(MethodBase.GetCurrentMethod().DeclaringType.Namespace);
             harmony.PatchAll();
-            KeeperModSettings.LoadHemopacks();
+            RimKeeperTakeHemopacksModSettings.LoadHemopacks();
         }
     }
 
@@ -35,27 +36,27 @@ namespace Keepercraft.RimKeeperTakeHemopacks
             if (!pawn.IsColonist) return;
             if (!pawn.genes.HasGene(hemogenicGene)) return;
 
-            int pawnHemogenPackCount = pawn.inventory.innerContainer.Where(c => KeeperModSettings.hemogenPacks.Contains(c.def)).Sum(s => s.stackCount);
-            if (pawnHemogenPackCount < KeeperModSettings.HemogenInventoryThreshold)
+            int pawnHemogenPackCount = pawn.inventory.innerContainer.Where(c => RimKeeperTakeHemopacksModSettings.hemogenPacks.Contains(c.def)).Sum(s => s.stackCount);
+            if (pawnHemogenPackCount < RimKeeperTakeHemopacksModSettings.HemogenInventoryThreshold)
             {
                 DebugHelper.Message("{0} looking", pawn.Name);
-                Thing thing = KeeperModSettings.hemogenPacks.Select(s => __instance.GetPrivateMethod<Thing>("FindThingFor", pawn, s)).FirstOrDefault(w => w != null);
+                Thing thing = RimKeeperTakeHemopacksModSettings.hemogenPacks.Select(s => __instance.GetPrivateMethod<Thing>("FindThingFor", pawn, s)).FirstOrDefault(w => w != null);
                 if (thing != null)
                 {
                     Job job = JobMaker.MakeJob(JobDefOf.TakeCountToInventory, thing);
-                    int b = KeeperModSettings.HemogenInventoryLimit - pawnHemogenPackCount;
+                    int b = RimKeeperTakeHemopacksModSettings.HemogenInventoryLimit - pawnHemogenPackCount;
                     job.count = Mathf.Min(thing.stackCount, b);
                     __result = job;
                     DebugHelper.Message("{0} try take {1}", pawn.Name, b);
                     return;
                 }
 
-                if (KeeperModSettings.HemogenInventoryShare)
+                if (RimKeeperTakeHemopacksModSettings.HemogenInventoryShare)
                 {
                     foreach (var innerPawn in Find.CurrentMap.mapPawns.FreeColonists.Where(w => w != pawn))
                     {
                         DebugHelper.Message("{0} looking in {1} inventory", pawn.Name, innerPawn.Name);
-                        foreach (var hemogenPack in KeeperModSettings.hemogenPacks)
+                        foreach (var hemogenPack in RimKeeperTakeHemopacksModSettings.hemogenPacks)
                         {
                             var hemopacks = innerPawn.inventory.innerContainer.Where(c => hemogenPack == c.def);
                             if (hemopacks.Any())
@@ -65,7 +66,7 @@ namespace Keepercraft.RimKeeperTakeHemopacks
                                 if (pawnHemogenPackCount > innerPawnHemogenPackCount) return;
 
                                 int avg = (pawnHemogenPackCount + innerPawnHemogenPackCount) / 2;
-                                int pawn_need_to_take = Mathf.Min(avg, KeeperModSettings.HemogenInventoryLimit) - pawnHemogenPackCount;
+                                int pawn_need_to_take = Mathf.Min(avg, RimKeeperTakeHemopacksModSettings.HemogenInventoryLimit) - pawnHemogenPackCount;
                                 if (pawn_need_to_take <= 0) return;
 
                                 Job job = JobMaker.MakeJob(JobDefOf.TakeFromOtherInventory, hemopacks.First(), innerPawn);

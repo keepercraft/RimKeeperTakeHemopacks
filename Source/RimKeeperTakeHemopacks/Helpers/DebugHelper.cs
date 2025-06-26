@@ -5,7 +5,7 @@ namespace Keepercraft.RimKeeperTakeHemopacks.Helpers
     public static class DebugHelper
     {
         private static string _header = "Debug"; 
-        public static bool Active = KeeperModSettings.DebugLog;
+        public static bool Active = false;
 
         public static void SetHeader(string text) => _header = string.Format("[{0}] ", text);
 
