@@ -3,6 +3,7 @@ using Keepercraft.RimKeeperTakeHemopacks.Extensions;
 using Keepercraft.RimKeeperTakeHemopacks.Helpers;
 using Keepercraft.RimKeeperTakeHemopacks.Models;
 using RimWorld;
+using RimWorld.Planet;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
@@ -34,7 +35,17 @@ namespace Keepercraft.RimKeeperTakeHemopacks
         {
             if (__result != null || pawn == null) return;
             if (!pawn.IsColonist) return;
+            if (!pawn.Spawned) return;
+            if (pawn.Drafted) return;
+            if (pawn.Downed) return;
+            if (pawn.genes == null) return;
+            if (pawn.inventory == null) return;
+            if (CaravanFormingUtility.IsFormingCaravanOrDownedPawnToBeTakenByCaravan(pawn)) return;
+#if RIMWORLD_17
+            if (!pawn.genes.HasActiveGene(hemogenicGene)) return;
+#else
             if (!pawn.genes.HasGene(hemogenicGene)) return;
+#endif
 
             int pawnHemogenPackCount = pawn.inventory.innerContainer.Where(c => RimKeeperTakeHemopacksModSettings.hemogenPacks.Contains(c.def)).Sum(s => s.stackCount);
             if (pawnHemogenPackCount < RimKeeperTakeHemopacksModSettings.HemogenInventoryThreshold)
@@ -53,7 +64,7 @@ namespace Keepercraft.RimKeeperTakeHemopacks
 
                 if (RimKeeperTakeHemopacksModSettings.HemogenInventoryShare)
                 {
-                    foreach (var innerPawn in Find.CurrentMap.mapPawns.FreeColonists.Where(w => w != pawn))
+                    foreach (var innerPawn in pawn.Map.mapPawns.FreeColonists.Where(w => w != pawn && w.inventory != null))
                     {
                         DebugHelper.Message("{0} looking in {1} inventory", pawn.Name, innerPawn.Name);
                         foreach (var hemogenPack in RimKeeperTakeHemopacksModSettings.hemogenPacks)

@@ -17,7 +17,7 @@
 	<IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
     <IncludeSymbols>True</IncludeSymbols>
 	<GenerateAssemblyInfo>True</GenerateAssemblyInfo>
-	<Platforms>x64</Platforms>
+	<Platforms>x64;x64 debug</Platforms>
 	<Configurations>1.7;1.6;1.5</Configurations>
 	<LangVersion>14</LangVersion>
 	<DebugType>none</DebugType>
@@ -25,30 +25,31 @@
 	<GenerateDependencyFile>false</GenerateDependencyFile>
   </PropertyGroup>
 	
-	<PropertyGroup Condition="'$(Platform)'=='x64'">
+	<PropertyGroup Condition="'$(Platform)' == 'x64' Or '$(Platform)' == 'x64 debug'">
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 		<BaseOutputPath />
 		<OutputPath>..\..\$(Configuration)\Assemblies</OutputPath>
 		<ModCopyDir>C:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\$(AssemblyTitle)\</ModCopyDir>
 	</PropertyGroup>
 
-	<Target Name="RemoveHarmonyDll" AfterTargets="Build" Condition="'$(Platform)'=='x64'">
-		<Delete Files="$(OutputPath)0Harmony.dll" ContinueOnError="true" />
-		
+	<PropertyGroup Condition="'$(Platform)' == 'x64 debug'">
+		<DebugType>portable</DebugType>
+		<DebugSymbols>true</DebugSymbols>
+	</PropertyGroup>
+
+	<Target Name="PrepareFiles" BeforeTargets="PrepareForBuild">
+		<RemoveDir Directories="$(OutputPath)" />
+		<RemoveDir Directories="$(ModCopyDir)\$(Configuration)\Assemblies" />
+	</Target>	
+	<Target Name="CopyModFiles" AfterTargets="Build">
 		<ItemGroup>
 			<SFiles Include="..\..\README.md;..\..\LICENSE" />
-		</ItemGroup>
-		<Copy SourceFiles="@(SFiles)" DestinationFolder="$(ModCopyDir)\%(RecursiveDir)" />
-
-		<ItemGroup>
 			<DllFiles Include="$(OutputPath)**\*.*" />
-		</ItemGroup>
-		<Copy SourceFiles="@(DllFiles)" DestinationFolder="$(ModCopyDir)\$(Configuration)\Assemblies\%(DllFiles.RecursiveDir)" />
-
-		<ItemGroup>
 			<AboutFiles Include="..\..\About\**\*.*" />
 		</ItemGroup>
-		<Copy SourceFiles="@(AboutFiles)" DestinationFolder="$(ModCopyDir)\About\%(AboutFiles.RecursiveDir)" />
+		<Copy SourceFiles="@(SFiles)" DestinationFolder="$(ModCopyDir)\%(RecursiveDir)" SkipUnchangedFiles="true" />
+		<Copy SourceFiles="@(DllFiles)" DestinationFolder="$(ModCopyDir)\$(Configuration)\Assemblies\%(DllFiles.RecursiveDir)" SkipUnchangedFiles="true" />
+		<Copy SourceFiles="@(AboutFiles)" DestinationFolder="$(ModCopyDir)\About\%(AboutFiles.RecursiveDir)" SkipUnchangedFiles="true" />
 	</Target>
 
     <ItemGroup>
@@ -58,56 +59,25 @@
         </None>
     </ItemGroup>
 
+	<PropertyGroup Condition="'$(Configuration)' == '1.5' Or '$(Configuration)' == '1.6'">
+		<DefineConstants>$(DefineConstants);RIMWORLD_16</DefineConstants>
+		<TargetFramework>net472</TargetFramework>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)' == '1.7'">
+		<DefineConstants>$(DefineConstants);RIMWORLD_17</DefineConstants>
+		<TargetFramework>net10.0</TargetFramework>
+	</PropertyGroup>
+	
 	<ItemGroup Condition="'$(Configuration)' == '1.5'">
-		<PackageReference Include="Krafs.Rimworld.Ref" Version="1.5.4085" />
-		<PackageReference Include="Lib.Harmony" Version="2.3.3">
-			<PrivateAssets>all</PrivateAssets>
-		</PackageReference>
+		<PackageReference Include="Krafs.Rimworld.Ref" Version="1.5.4085" ExcludeAssets="runtime" />
+		<PackageReference Include="Lib.Harmony" Version="2.3.3" ExcludeAssets="runtime" />
 	</ItemGroup>
 	
-  <ItemGroup Condition="'$(Configuration)' == '1.6'">
-	<PackageReference Include="Lib.Harmony" Version="2.3.6">
-		<Private>False</Private>
-      <PrivateAssets>all</PrivateAssets>
-      <GeneratePathProperty>False</GeneratePathProperty>
-    </PackageReference>
-    <Reference Include="Assembly-CSharp">
-      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\RimWorld\RimWorldWin64_Data\Managed\Assembly-CSharp.dll</HintPath>
-	  <Private>False</Private>
-    </Reference>
-    <Reference Include="UnityEngine">
-      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\RimWorld\RimWorldWin64_Data\Managed\UnityEngine.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="UnityEngine.CoreModule">
-      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\RimWorld\RimWorldWin64_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="UnityEngine.IMGUIModule">
-      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\RimWorld\RimWorldWin64_Data\Managed\UnityEngine.IMGUIModule.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="UnityEngine.TextRenderingModule">
-      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\RimWorld\RimWorldWin64_Data\Managed\UnityEngine.TextRenderingModule.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="UnityEngine.UI">
-      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\RimWorld\RimWorldWin64_Data\Managed\UnityEngine.UI.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-  </ItemGroup>
-  
-  <PropertyGroup Condition="'$(Configuration)' == '1.5' Or '$(Configuration)' == '1.6'">
-	<TargetFramework>net472</TargetFramework>
-  </PropertyGroup>
-	
-	<PropertyGroup Condition="'$(Configuration)' == '1.7'">
-		<TargetFramework>net10.0</TargetFramework>
-		<DebugType>portable</DebugType>
-		<DebugSymbols>true</DebugSymbols>
-		<Optimize>false</Optimize>
-		<GenerateDependencyFile>false</GenerateDependencyFile>
-	</PropertyGroup>
+	<ItemGroup Condition="'$(Configuration)' == '1.6'">
+		<PackageReference Include="Krafs.Rimworld.Ref" Version="1.6.4871" ExcludeAssets="runtime" />
+		<PackageReference Include="Lib.Harmony" Version="2.3.6" ExcludeAssets="runtime" />
+	</ItemGroup>
 
 	<ItemGroup Condition="'$(Configuration)' == '1.7'">
 		<PackageReference Include="Krafs.Rimworld.Ref" Version="1.7.4977-alpha.1" ExcludeAssets="runtime" />
